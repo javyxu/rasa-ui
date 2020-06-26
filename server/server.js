@@ -2,6 +2,7 @@
 global.rasa_endpoint =  process.env.rasa_endpoint || process.env.npm_package_config_rasa_endpoint;
 global.jwtsecret = process.env.jwtsecret || process.env.npm_package_config_jwtsecret;
 global.loglevel = process.env.loglevel || process.env.npm_package_config_loglevel;
+global.user_id = null
 global.admin_username = process.env.admin_username || process.env.npm_package_config_admin_username;
 global.admin_password = process.env.admin_password || process.env.npm_package_config_admin_password;
 global.db_schema = process.env.db_schema || process.env.npm_package_config_db_schema;

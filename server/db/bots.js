@@ -3,7 +3,7 @@ const logger = require('../util/logger');
 
 function getAllBots(req, res, next) {
   logger.winston.info('Bot.getAllBots');
-  db.all('select * from bots order by bot_id desc', function(err, data) {
+  db.all('select * from bots where user_id = ? order by bot_id desc', global.user_id, function(err, data) {
     if (err) {
       logger.winston.error(err);
     } else {
@@ -25,7 +25,7 @@ function getSingleBot(req, res, next) {
 
 function createBot(req, res, next) {
   logger.winston.info('Bot.createBot');
-  db.run('insert into bots(bot_name, bot_config, output_folder)' + 'values (?,?,?)', [req.body.bot_name, req.body.bot_config, req.body.output_folder], function(err) {
+  db.run('insert into bots(bot_name, bot_config, output_folder, user_id)' + 'values (?,?,?,?)', [req.body.bot_name, req.body.bot_config, req.body.output_folder, global.user_id], function(err) {
     if (err) {
       logger.winston.error("Error inserting a new record");
     } else {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+const user = require('../db/user');
 const bots = require('../db/bots');
 const intents = require('../db/intents');
 const expressions = require('../db/expressions');
@@ -139,6 +140,7 @@ router.post('/rasa/conversations/messages', rasa_router.conversationParseRequest
 router.post('/rasa/restart', rasa_router.restartRasaCoreConversation);
 router.get('/rasa/story', rasa_router.getConversationStory);
 router.post('/rasa/conversations/execute', rasa_router.runActionInConversation);
+router.post('/rasa/conversations/chat', rasa_router.runConversationChat)
 
 
 //authentication js

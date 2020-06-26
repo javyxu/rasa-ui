@@ -77,14 +77,17 @@
                         <div ng-if="transaction.event == 'user'" class="outgoing_msg">
                           <div class="sent_msg">
                             <div class="">
-                              <p>{{ transaction.text }}</p>
+                              <span class="input-group-append">
+                                <p>{{ transaction.text }}</p>
+                                <div class="icons"><img src="../../../assets/img/people.png"></div>
+                              </span>
                             </div>
-                            <div class="">
+                            <!-- <div class="">
                               <span class="time_date sent">{{ transaction.parse_data.intent.name }}</span>
                             </div>
                             <div class="">
                               <span class="time_date sent">{{ transaction.timestamp * 1000 | chatDate }}</span>
-                            </div>
+                            </div> -->
                           </div>
                         </div>
 
@@ -92,7 +95,10 @@
                         <div ng-if=" transaction.event == 'bot' " class="incoming_msg">
                           <div class="received_msg">
                             <div class="received_withd_msg">
-                              <p>{{ transaction.text }}</p>
+                              <span class="input-group-append">
+                                <div class="icons"><img src="../../../assets/img/robot.png"></div>
+                                <p>{{ transaction.text }}</p>
+                              </span>
                             </div>
                             <div class="received_withd_msg" ng-if=" transaction.timestamp ">
                               <span class="time_date">

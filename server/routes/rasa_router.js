@@ -18,7 +18,8 @@ module.exports = {
   conversationParseRequest: conversationParseRequest,
   restartRasaCoreConversation: restartRasaCoreConversation,
   getConversationStory: getConversationStory,
-  runActionInConversation: runActionInConversation
+  runActionInConversation: runActionInConversation,
+  runConversationChat: runConversationChat
 };
 
 /* -------------------------------- Util Functions ----------------------------------------------------------------------------------------------------- */
@@ -310,6 +311,29 @@ function restartRasaCoreConversation(req, res, next) {
       }
       logger.winston.verbose("Restart Response" + JSON.stringify(body));
       updateConversation(req.body.conversation_id, body);
+      sendOutput(200, res, body);
+    });
+  } catch (err) {
+    logger.winston.error(err);
+    sendOutput(500, res, '{"error" : "Exception caught !!"}');
+    return;
+  }
+}
+
+function runConversationChat(req, res, next) {
+  logger.winston.info("Rasa Chat Request -> " + global.rasa_endpoint + "/api/v1/ai/conversations");
+  try {
+
+    var body = JSON.stringify({ "app_id":"wisebot", "conversation_id":String(req.body.conversation_id), "trace_id":"accountid@userid@orderid",
+    "text":req.body.text });
+    // logger.winston.info(body)
+    request({ method: "POST", uri: global.rasa_endpoint + "/api/v1/ai/conversations", body: body }, function (err, response, body) {
+      if (err) {
+        logger.winston.error(err);
+        sendOutput(500, res, '{"error" : "Exception caught !!"}');
+        return;
+      }
+      logger.winston.verbose("Chat Response" + JSON.stringify(body));
       sendOutput(200, res, body);
     });
   } catch (err) {

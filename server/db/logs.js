@@ -26,7 +26,7 @@ function logRequest(req, type, data) {
     obj.event_type = type;
     obj.event_data = JSON.stringify(data);
     
-    db.run('insert into nlu_log (ip_address, query, event_type, event_data)' + 'values (?,?,?,?)', [obj.ip_address, obj.query, obj.event_type, obj.event_data], function(err) {
+    db.run('insert into nlu_log (ip_address, query, event_type, event_data, user_id)' + 'values (?,?,?,?,?)', [obj.ip_address, obj.query, obj.event_type, obj.event_data, global.user_id], function(err) {
       if (err) {
         logger.winston.error("Error inserting a new record");
       }
@@ -37,7 +37,7 @@ function logRequest(req, type, data) {
 }
 
 function getLogs(req, res, next) {
-  db.all('select * from nlu_log where event_type = ? order by timestamp desc', req.params.query, function(err, data) {
+  db.all('select * from nlu_log where event_type = ? and user_id = ? order by timestamp desc', req.params.query, global.user_id, function(err, data) {
     if (err) {
       logger.winston.error(err);
     } else {
@@ -47,7 +47,7 @@ function getLogs(req, res, next) {
 }
 
 function getRequestUsageTotal(req, res, next) {
-  db.get("select count(*) from nlu_log where event_type = 'parse'", req.params.query, function(err, data) {
+  db.get("select count(*) from nlu_log where event_type = 'parse' and user_id = ?", req.params.query, globa.user_id, function(err, data) {
     if (err) {
       logger.winston.error(err);
     } else {
@@ -57,7 +57,7 @@ function getRequestUsageTotal(req, res, next) {
 }
 
 function getTotalLogEntries(req, res, next) {
-  db.get("select count(*) from nlu_log", req.params.query, function(err, data) {
+  db.get("select count(*) from nlu_log where user_id = ?", req.params.query, global.user_id, function(err, data) {
     if (err) {
       logger.winston.error(err);
     } else {

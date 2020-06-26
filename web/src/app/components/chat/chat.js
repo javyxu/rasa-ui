@@ -80,6 +80,29 @@ function ChatController($scope, $rootScope, $interval, $http, Rasa_Version, Sett
     });
   };
 
+  // $scope.executeCoreRequest = function () {
+  //   let reqMessage = {};
+  //   reqMessage = { text: $scope.test_text, sender: "user", conversation_id: $scope.selected_conversation.conversation_id };
+  //   //TODO: We should use a factory method for this
+  //   if ($scope.test_text) {
+  //     //make a httpcall
+  //     $scope.test_text = "";
+  //     $('.write_msg').focus();
+  //     $http.post(appConfig.api_endpoint_v2 + '/rasa/conversations/messages', JSON.stringify(reqMessage)).then(function (response) {
+  //       if (response.data && response.data.tracker) {
+  //         $scope.selected_conversation.conversation = JSON.stringify(response.data);
+  //         $scope.transactions = response.data.tracker.events;
+  //         checkForActions(response.data);
+  //         $scope.loadConversationStory($scope.selected_conversation.conversation_id);
+  //         scrollToMessage();
+  //       }
+  //     },
+  //       function (errorResponse) {
+  //         //
+  //       }
+  //     );
+  //   }
+  // };
 
   $scope.executeCoreRequest = function () {
     let reqMessage = {};
@@ -87,13 +110,25 @@ function ChatController($scope, $rootScope, $interval, $http, Rasa_Version, Sett
     //TODO: We should use a factory method for this
     if ($scope.test_text) {
       //make a httpcall
+      var typing = {};
+      typing.event = "user"
+      typing.text = $scope.test_text;
+
       $scope.test_text = "";
       $('.write_msg').focus();
-      $http.post(appConfig.api_endpoint_v2 + '/rasa/conversations/messages', JSON.stringify(reqMessage)).then(function (response) {
-        if (response.data && response.data.tracker) {
+      $scope.transactions.push(typing);
+      // $http.post(appConfig.api_endpoint_v2 + '/rasa/conversations/messages', JSON.stringify(reqMessage)).then(function (response) {
+      $http.post(appConfig.api_endpoint_v2 + '/rasa/conversations/chat', JSON.stringify(reqMessage)).then(function (response) {
+        if (response.data) {
           $scope.selected_conversation.conversation = JSON.stringify(response.data);
-          $scope.transactions = response.data.tracker.events;
-          checkForActions(response.data);
+          // $scope.transactions = response.data.tracker.events;
+
+          if (response.data) {
+            var typing = {};
+            typing.event = "bot"
+            typing.text = response.data["data"]["text"];
+            $scope.transactions.push(typing);
+        }
           $scope.loadConversationStory($scope.selected_conversation.conversation_id);
           scrollToMessage();
         }

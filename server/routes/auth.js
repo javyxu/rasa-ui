@@ -1,29 +1,34 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db/db');
 const logger = require('../util/logger');
+const user = require('../db/user')
 
 function authenticateUser(req, res, next) {
   //authenticate user
   logger.winston.info('Authenticate User');
-  if (req.body.username === global.admin_username && req.body.password === global.admin_password) {
-    //create token and send it back
-    const tokenData = { username: 'admin', name: 'Portal Administrator' };
-    // if user is found and password is right
-    // create a token]
-    var token = ""
-    try {
-      token = jwt.sign(tokenData, global.jwtsecret);
-    } catch (err) {
-      logger.winston.error(err);
-    };
-    // return the information including token as JSON
-    res.json({ username: 'admin', token: token });
-  } else {
-    logger.winston.error('Information didnt match or not provided.');
-    return res.status(401).send({
-      success: false,
-      message: 'Username and password didnt match.'});
-  }
+  db.get('select user_id from users where user_name = ? and password = ?', req.body.username, req.body.password, function(err, row) {
+    if (row == null) {
+      logger.winston.error('Information didnt match or not provided.');
+      return res.status(401).send({
+        success: false,
+        message: 'Username and password didnt match.'});
+    } else {
+      //create token and send it back
+      const tokenData = { username: req.body.username, name: 'Portal Administrator' };
+      // if user is found and password is right
+      // create a token]
+      var token = ""
+      try {
+        token = jwt.sign(tokenData, global.jwtsecret);
+      } catch (err) {
+        logger.winston.error(err);
+      };
+      global.user_id = row['user_id']
+      logger.winston.info(global.user_id)
+      // return the information including token as JSON
+      res.json({ username: req.body.username, token: token });
+    }
+  });
 }
 
 function authenticateClient(req, res, next) {

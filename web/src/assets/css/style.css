@@ -144,7 +144,7 @@ tags-input .tags .tag-item .remove-button {
 .received_msg {
   padding: 0 0 0 10px;
   float: left;
-  max-width: 50%;
+  max-width: 100%;
  }
 
  .received_withd_msg p {
